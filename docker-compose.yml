@@ -1,0 +1,60 @@
+version: '3.3'
+
+services:
+
+  redis:
+    image: redis:alpine
+    restart: always
+    networks:
+      - configvpn_net
+    ports:
+      - 6379:6379
+
+  # proxy:
+  #   image: nginx:alpine
+  #   restart: always
+  #   volumes:
+  #     - ./core/frontend:/usr/src/front
+  #     - ./nginx:/etc/nginx/conf.d
+  #     - ./core/backend/static:/usr/src/app/static
+  #   ports:
+  #     - 8000:8000
+  #     - 8080:8080
+  #     - 80:80
+  #   networks:
+  #     - configvpn_net
+  #   depends_on:
+  #     - core
+
+  core:
+    build: ./core/backend/
+    restart: always
+    volumes:
+      - ./core/backend:/usr/src/app
+      - ./core/backend/static:/usr/src/app/static
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - configvpn_net
+
+  db:
+    image: postgres:alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=vpnadmin
+      - POSTGRES_PASSWORD=Django_admin2281408
+      - POSTGRES_DB=configvpn
+    networks:
+      - configvpn_net
+
+volumes:
+  postgres_data:
+
+networks:
+  configvpn_net:
+    driver: bridge
