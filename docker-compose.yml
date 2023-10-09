@@ -10,21 +10,21 @@ services:
     ports:
       - 6379:6379
 
-  # proxy:
-  #   image: nginx:alpine
-  #   restart: always
-  #   volumes:
-  #     - ./core/frontend:/usr/src/front
-  #     - ./nginx:/etc/nginx/conf.d
-  #     - ./core/backend/static:/usr/src/app/static
-  #   ports:
-  #     - 8000:8000
-  #     - 8080:8080
-  #     - 80:80
-  #   networks:
-  #     - configvpn_net
-  #   depends_on:
-  #     - core
+  proxy:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      # - ./core/frontend:/usr/src/front
+      - ./nginx:/etc/nginx/conf.d
+      - ./core/backend/static:/usr/src/app/static
+    ports:
+      # - 8000:8000
+      - 8080:8080
+      - 80:80
+    networks:
+      - configvpn_net
+    depends_on:
+      - core
 
   core:
     build: ./core/backend/

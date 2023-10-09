@@ -5,9 +5,9 @@ import random
 class Server(models.Model):
 
     ip = models.GenericIPAddressField(verbose_name="Адрес", max_length=50, default='address', unique=True)
-    portSSH = models.IntegerField(verbose_name="SSH порт", max_length=5)
-    portWG = models.IntegerField(verbose_name="WG порт", max_length=5, default=0)
-    publicKey = models.CharField()
+    portSSH = models.CharField(verbose_name="SSH порт", max_length=5)
+    portWG = models.CharField(verbose_name="WG порт", max_length=5, default=0)
+    publicKey = models.CharField(verbose_name="Публичный ключ", max_length=50, default='public_key', unique=True)
     statusServer = models.BooleanField(verbose_name="Статус активности сервера", default=False)
     statusWG = models.BooleanField(verbose_name="Статус активности WG", default=False)
 
@@ -28,7 +28,7 @@ class Server(models.Model):
 class User(models.Model):
 
     username = models.CharField(verbose_name="Имя пользователя", max_length=50, default='address', unique=True)
-    publicKey = models.CharField()
+    publicKey = models.CharField(verbose_name="Публичный ключ", max_length=50, default='public_key', unique=True)
     allowedIps = models.CharField(max_length=18, verbose_name="Разрешенные IP", default="10.0.0.1/32")
 
     class Meta:
