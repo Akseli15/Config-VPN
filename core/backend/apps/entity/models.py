@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib import admin
-import random
 
 class Server(models.Model):
 
+    _id = models.CharField(verbose_name='ID', max_length=150, default='server_', unique=True)
     ip = models.GenericIPAddressField(verbose_name="Адрес", max_length=50, default='address', unique=True)
     portSSH = models.CharField(verbose_name="SSH порт", max_length=5)
     portWG = models.CharField(verbose_name="WG порт", max_length=5, default=0)
@@ -17,16 +17,10 @@ class Server(models.Model):
 
     def __str__(self):
         return self.ip
-    
-    @admin.action(description='Сгенерировать WG порт')
-    def setPortWG(self, _, queryset):
-        for ip in queryset:
-            if self.portWG == 0:
-                ip.portWG = random.randint(1024, 65535)
-                self.save
 
 class User(models.Model):
 
+    _id = models.CharField(verbose_name='ID', max_length=150, default='user_', unique=True)
     username = models.CharField(verbose_name="Имя пользователя", max_length=50, default='address', unique=True)
     publicKey = models.CharField(verbose_name="Публичный ключ", max_length=50, default='public_key', unique=True)
     allowedIps = models.CharField(max_length=18, verbose_name="Разрешенные IP", default="10.0.0.1/32")
@@ -41,6 +35,7 @@ class User(models.Model):
 
 class SystemUser(models.Model):
 
+    _id = models.CharField(verbose_name='ID', max_length=150, default='systemuser_', unique=True)
     login = models.CharField(verbose_name="Логин", max_length=60, unique=True)
     password = models.CharField(verbose_name="Пароль", max_length=60)
 
@@ -53,6 +48,7 @@ class SystemUser(models.Model):
 
 class ServerUser(models.Model):
 
+    _id = models.CharField(verbose_name='ID', max_length=150, default='serveruser_', unique=True)
     login = models.CharField(verbose_name="Логин", max_length=60, unique=True)
     password = models.CharField(verbose_name="Пароль", max_length=60)
 
