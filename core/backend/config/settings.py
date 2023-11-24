@@ -27,7 +27,9 @@ SECRET_KEY = '#e#7t2)sanz$zm2e*@4sc0#81+fyzf_)4hx-q%s@*&@%xu7lsy'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get( "ALLOWED_HOSTS", default="localhost 127.0.0.1").split(" ")
+CSRF_TRUSTED_ORIGINS = os.environ.get( "CSRF_TRUSTED_ORIGINS", default="http://localhost:8000").split(" ")
+CORS_ALLOWED_ORIGINS = os.environ.get( "CORS_ALLOWED_ORIGINS", default="http://localhost:8000").split(" ")
 
 
 # Application definition

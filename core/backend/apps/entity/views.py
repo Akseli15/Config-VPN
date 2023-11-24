@@ -16,8 +16,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import random, string, subprocess
+import ipaddress, random
+
 
 class AuthToken(APIView):
+    
     permission_classes = (AllowAny,)
     serializer_class = UserSerializer
 
@@ -45,6 +48,7 @@ def get_tokens_for_user(user):
     }
 
 class Logout(APIView):
+
     permission_classes = (IsAuthenticated,)
     def post(self, request):
         try:
@@ -56,16 +60,18 @@ class Logout(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-class ServerDetail(APIView):
+class GetServer(APIView):
 
     @jwt_auth_check
     def get(self, _):
         serializer = ServerSerializer(Server.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
-    
+
+class CreateServer(APIView):
+
     @jwt_auth_check
     def post(self, request):
-        _id = request.data.get('_id')
+        _id = request.data.get('id')
         ip = request.data.get('ip')
         port_ssh = request.data.get('port_ssh')
         username = request.data.get('username')
@@ -101,7 +107,9 @@ class ServerDetail(APIView):
         server.save()
 
         return Response({"status": "ok"})
-    
+
+class DeleteServer(APIView):
+
     @jwt_auth_check
     def delete(self, request):
         # Получаем данные от фронтенда, например, id сервера, suCommand, suPassword
@@ -124,13 +132,15 @@ class ServerDetail(APIView):
 
         return Response({"status": "ok"})
     
-class UserDetail(APIView):
+class GetUser(APIView):
 
     @jwt_auth_check
     def get(self, _):
         serializer = UserSerializer(User.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
     
+class CreateUser(APIView):
+
     @jwt_auth_check
     def post(self, request):
         _id = request.data.get('_id')
@@ -141,12 +151,13 @@ class UserDetail(APIView):
         vpnip = request.data.get('vpnip')
         server_publickey = request.data.get('server_publickey')
 
-        ip = 
+        ip = ipaddress.IPv4Address(random.randint(ipaddress.IPv4Address('10.0.0.1'), ipaddress.IPv4Address('255.255.255.255'))) 
+        ip_with_mask = ipaddress.IPv4Network(f"{ip}/32", strict=False)
 
         command = [
             'bash',
             'core/backend/scripts/addUser.sh',
-            ip,
+            ip_with_mask,
             port_ssh,
             port_WG,
             username,
@@ -165,13 +176,15 @@ class UserDetail(APIView):
         #portWG = port_WG
         # portSSH=port_ssh
 
-        user = Server(_id=_id, ip=ip, username = username, publicKey = public_key)
+        user = Server(_id=_id, username = username, publicKey = public_key, allowedIps = ip_with_mask)
         user.save()
 
         return Response({"status": "ok"})
     
+class DeleteUser(APIView):
+
     @jwt_auth_check
-    def delete(self, request):
+    def delete(self, request, id):
         # Получаем данные от фронтенда, например, id сервера и id пользователя
         server_id = request.data.get('server_id')
         user_id = request.data.get('user_id')
@@ -186,6 +199,7 @@ class UserDetail(APIView):
 
 
 class ServerStatus(APIView):
+
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
