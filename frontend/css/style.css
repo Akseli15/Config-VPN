@@ -1,0 +1,259 @@
+/*общая стилизация*/
+@font-face {
+    font-family: PIXY;
+    src: url(../fonts/PIXY/PIXY.ttf) /* TTF file for CSS3 browsers */
+   }
+body,
+html{
+    font-size: 66px;
+    background-color: rgba(1, 0, 0, 0.63);
+    color: white;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    font-family: 'PIXY';
+    margin: 0;
+    padding: 0;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.container{
+    max-width: 90%;
+    padding-top: 50px;
+    margin: 0 auto;
+    
+}
+
+.container.entry{
+    display: flex;
+    max-height: 100vh;
+}
+
+.auth__block{
+    margin-left: 10%;
+}
+/*Картинка ВПН*/
+.logo{
+    height: 670px;
+    width: 600px;
+}
+
+.auth__title{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+.auth__title__text{
+    text-align: center;
+    display: flex;
+    align-items: center;
+    margin-left: 50px;
+    font-weight: 400;
+}
+
+:root {
+    --border-w: 3px;
+  }
+
+.radius__form {
+    width: 100%;
+    position: relative;
+    padding: 1px 15px;
+    margin: 20px 0;
+    border-radius: 50px;
+    text-align: center;
+    left: 4%;
+    z-index: 5;
+    margin-bottom: 10px;
+    min-width: none;
+    background-color: inherit;
+    /* Добавляем обводку, используя стили из .form */
+}
+
+.radius__form::before {
+    content: "";
+    position: absolute;
+    inset: calc(0px - var(--border-w));
+    border-radius: 50px;
+    padding: 5px;
+    background: linear-gradient(180deg,#5AA494, rgba(146, 213, 241, 0));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+}
+
+.radius__form.input::after{
+    background: linear-gradient(180deg,#5AA494, rgba(146, 213, 241, 0));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+
+}
+
+/*Форма*/
+.form{
+    
+    font-family: 'PIXY';
+    position: relative;
+    z-index: 5;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 450px;
+    height: 100%;
+    max-height: 355px;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 50px;
+    background: linear-gradient( 165deg, rgba(1, 1, 1, 0),rgba(1, 1, 1, 0),rgba(32, 163, 152, 0.353));
+}
+    
+
+.form__title{
+    font-size: 55px;
+    text-align: center;
+    margin: 10px;
+   
+}
+
+.form__input{
+    
+    margin: 30px auto 0;
+    display: flex;
+    flex-direction: column;
+    display: flex;
+}
+
+.form__input__place{
+    padding: 3px 20px;
+    margin: 0 auto 30px;
+    border: none;
+    line-height: 2;
+    border-radius: 30px;
+    width: 73%;
+    font-size: 20px;
+}
+.form__input__place.login{
+    display: none;
+}
+.form__input__place.password{
+    display: flex;
+    margin-bottom: 35px;
+}
+
+.form__input__place:focus{
+    outline: none;
+   
+}
+.form__input__place::placeholder {
+    color: #212529;
+    opacity: 0.4;
+    display: flex;
+    align-items: center;
+  }
+
+  .form__button{
+    padding: 7px 25px;
+    background-color: #5A73F3;
+    border-radius: 15px;
+    border: none;
+    color: white;
+    font-size: 17px;
+    font-family: inherit;   
+    display: flex;
+    align-items: center;
+    margin: 0 auto;
+    cursor: pointer;
+ 
+  }
+  .login__help{
+    text-decoration: underline;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    text-align: center;
+    margin-top: 10px;
+    margin-top: 15% ;
+  }
+
+  .login__help:hover{
+    cursor: pointer;
+  }
+/*Форма ошибка ввода*/
+
+  .form__input__place__error{
+    padding: 3px 20px;
+    margin: 0 auto;
+    border: solid #FF6565;
+    line-height: 2;
+    border-radius: 30px;
+    width: 73%;
+    font-size: 20px;
+
+
+}
+
+.form__input__place__error:focus{
+    outline: none;
+}
+
+.form__input__error__block{
+    width: 100%;
+    padding: 0;
+    margin: 0 auto 10px;
+    display: flex;
+    flex-direction: column;
+    line-height: 10px;
+    
+}
+.form__input__error__block.login{
+display: flex;
+}
+
+.form__input__error__block.password{
+display: none;
+}
+.error__message{
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    text-align: center;
+    color: #FF6565;
+    font-size: 13px;
+}
+
+.error__symbol{
+    color: #FF6565;
+    font-family: serif;
+    font-size: 30px;
+    position: relative;
+    bottom: 35px;
+    left: 43%;
+}
+
+.img__bottom{
+    position: absolute;
+    height: 180px;
+    width:  100%;
+    bottom: 0;
+    left: 0;
+
+   
+
+}
+/*^ аутентификация*/
+/*список*/
+
+
+
+
+
+
+

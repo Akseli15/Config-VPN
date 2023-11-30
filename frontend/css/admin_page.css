@@ -1,0 +1,86 @@
+/*общая стилизация*/
+body,
+html{
+    font-size: 66px;
+    background-color: rgba(1, 0, 0, 0.63);
+    color: white;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Tiny Pixy', sans-serif;
+    
+
+
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.container{
+    max-width: 80%;
+    padding-top: 40px;
+    margin: 0 auto;
+    
+}
+
+.container.entry{
+    display: flex;
+    max-height: 100vh;
+}
+/*HEAdER*/
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    
+}
+.logo__block{
+    display: flex;
+    align-items: center;
+    font-size: 46px;
+    max-width: 220px;
+    width: 100%;
+    justify-content: space-between;
+    text-transform: lowercase;
+
+}
+
+
+.logo__img{
+    width: 30px;
+    height: 45px;
+}
+
+.btn__icon{
+    background-color: inherit;
+    border: none;
+    margin-right: 7px;
+}
+.btn__icon:hover{
+    cursor: pointer;
+}
+
+.nav__bar{
+    display: flex;
+    align-items: center;
+}
+
+span{
+    width: 30px;
+    height: 2px;
+    position: relative;
+    margin: 30px auto;
+    transform: rotate(0deg);
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    background-color:inherit;
+}

@@ -1,0 +1,244 @@
+/*общая стилизация*/
+@font-face {
+    font-family: PIXY;
+    src: url(../fonts/PIXY/PIXY.ttf) /* TTF file for CSS3 browsers */
+   }
+body,
+html{
+    font-size: 66px;
+    background-color: rgba(1, 0, 0, 0.63);
+    color: white;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'PIXY';
+    
+
+
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.container{
+    max-width: 80%;
+    padding-top: 20px;
+    margin: 0 auto;
+    
+}
+
+.container.entry{
+    display: flex;
+    max-height: 100vh;
+}
+/*HEAdER*/
+.header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    
+}
+.logo__block{
+    display: flex;
+    align-items: center;
+    font-size: 46px;
+    max-width: 265px;
+    width: 100%;
+    justify-content: space-between;
+    text-transform: lowercase;
+
+}
+
+
+.logo__img{
+    width: 30px;
+    height: 45px;
+}
+
+.btn__icon{
+    background-color: inherit;
+    border: none;
+    margin-right: 7px;
+}
+.btn__icon:hover{
+    cursor: pointer;
+}
+
+.nav__bar{
+    display: flex;
+    align-items: center;
+}
+
+/*Блок ПОИСКА*/
+
+.search__block{
+   width: 85%;
+   margin: 0 auto;
+   text-align: center;
+   align-items: center;
+   display: flex;
+   margin-bottom: 50px;
+
+}
+.input__search{
+    width: 100%;
+    padding: 3px 40px;
+    background-color: rgba(107, 107, 107, 0.24);
+    border: none;
+    border-radius: 12px;
+    font-size: 20px;
+    color: #f5f3ef52;
+    text-transform: lowercase;
+    font-weight: 100;
+    align-items: center;
+}
+
+.input__search:focus{
+    outline: none;
+
+}
+
+.search__icon{
+    position: relative;
+    left: 3.2%;
+}
+
+.btn__search{
+    background-color: #5A73F3;
+    border: none;
+    border-radius: 12px;
+    padding: 2px 13px;
+    color: white;
+    position: relative;
+    right: 7%;
+    font-size: 15px;
+}
+
+
+/*Блок ТАБЛИЦЫ*/
+
+.table{
+  
+    margin-bottom: 20px;
+}
+
+.table__container{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 40px;
+    margin-bottom: 10px;
+    font-family: 'Forma DJR Micro', sans-serif;
+    font-size: 20px;
+    align-items: center;
+    text-align: left;
+}   
+
+.table__data{
+    width: 15%;
+    text-align: center;
+}
+
+.table__data.status{
+    font-weight: 300;
+ 
+    padding: 0 10px 2px 25px;
+    border-radius: 15px;
+}
+.table__data.status.green{
+    width: auto;    
+    border: 1px solid #81D0A1;
+    margin:0 calc((15% - 85px)/2);
+}
+.table__data.status.red{
+    width: 18%;
+    border: 1px solid #FF6565;
+    position: relative;  
+}
+
+.table__data.name{
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.btn__icon.data{
+    height: 40px;
+}
+
+.table__data.status.green li::marker{
+    font-size:x-large;
+    color: #5AA494;
+}
+.table__data.status.red li::marker{
+    font-size:x-large;
+    color: #FF6565;
+}
+
+.display__flex{
+    display: flex;
+    align-items: center;
+}
+
+.server__list__title{
+    font-size: 55px;
+}
+
+.server__list__button{
+    border: none;
+    font-family: 'Arial', serif;
+    cursor: pointer;
+    margin-left: 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    background: radial-gradient(92.53% 228.48% at 68.06% -30.56%, #81D0A1 0%, rgba(129, 208, 161, 0.00) 100%), #A7F46F;
+    padding: 10px 20px;
+    outline: none;
+}
+
+.align__center{
+    vertical-align: middle;
+}
+
+table{
+    width: 95%;
+    margin-top: 20px;
+}
+
+.table__container.head{
+    color: #979797;;
+    border: 3px solid #979797;
+    border-radius: 20px;
+    padding: 5px;
+
+}
+
+.table__container.info{
+    margin: 10px auto;
+    width: 110%;
+    border-radius: 50px ;
+    padding: 0 20px;
+    cursor: pointer;
+}
+.table__container.info:hover{
+    background-color:rgb(58, 58, 58);
+}
+
+
+
+
+
+
+
+
+
+
+

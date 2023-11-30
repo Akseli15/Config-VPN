@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.cdnfonts.com/css/tiny-pixy" rel="stylesheet">
+    <title>Login</title>
+
+</head>
+<body>
+    <div class="container entry">
+        <img class="logo" src="img/Rectangle.png">
+        <div class="auth__block">
+            <div class="auth__title">
+                <div><img class="auth__title__img" src="img/Frame.png"></div> 
+                <div class="auth__title__text">Ogre VPN</div>
+            </div>
+            <form class="radius__form form">
+                    <div class="form__title">Вход</div>
+                    <div class="form__input">
+                        <div class="form__input__error__block login">
+                            <input class="form__input__place__error" type="email" placeholder="логин">
+                        </div>
+                        <input class="form__input__place login" type="email" placeholder="логин">
+                        <div class="form__input__error__block password">
+                            <input class="form__input__place__error" type="password" placeholder="пароль">
+                            <div v-if="loginError" class="error__symbol">&#10006</div>
+                            <div class="error__message">неверный пароль</div>
+                        </div>
+                        <input class="form__input__place password" type="password" placeholder="пароль">
+                    </div>
+                    <button class="form__button">Войти</button>
+                    <div class="login__help"><a >Не можете войти?</a></div>
+            </form>
+           
+            
+        </div>
+    </div>
+    <img class="img__bottom" src="/img/p6 1.png" alt="" width="100%" >
+    
+</body>
+</html>
