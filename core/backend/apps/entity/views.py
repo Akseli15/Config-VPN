@@ -1,6 +1,3 @@
-from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -81,7 +78,7 @@ class CreateServer(APIView):
         serverPassword = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12))
         port_WG = str(random.randint(1024, 65535))
 
-        command = [
+        create_command = [
             'bash',
             'core/backend/scripts/installing.sh',
             ip,
@@ -95,14 +92,30 @@ class CreateServer(APIView):
             serverPassword,
         ]
 
-        subprocess.run(command)
+        subprocess.run(create_command)
 
-        public_key = 1
-        statusServer = False
-        statusWG = False
+        output = subprocess.check_output(create_command)
+        output_lines = output.decode('utf-8').splitlines()
 
-        # Спарсим данные, такие как publicKey, состояние WG, состояние сервера
-        # Сохраняем данные в базу данных
+        public_key = output_lines[0]
+        # private_key = output_lines[1]
+
+        status_command = [
+            'bash',
+            'core/backend/scripts/status.sh',
+            ip,
+            port_ssh,
+            username,
+            password,
+        ]
+        
+        subprocess.run(status_command)
+
+        output = subprocess.check_output(status_command)
+        output_status = output.decode('utf-8').splitlines()
+        statusServer = output_status[0]
+        statusWG = output_status[1]
+
         server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG = port_WG, publicKey = public_key, statusServer = statusServer, statusWG = statusWG)
         server.save()
 
@@ -112,19 +125,24 @@ class DeleteServer(APIView):
 
     @jwt_auth_check
     def delete(self, request):
-        # Получаем данные от фронтенда, например, id сервера, suCommand, suPassword
-        server_id = request.data.get('server_id')
-        su_command = request.data.get('suCommand')
-        su_password = request.data.get('suPassword')
+        serverIp = request.data.get('serverIp')
         username = request.data.get('username')
         password = request.data.get('password')
+        port_ssh = request.data.get('port_ssh')
 
-        # Находим объект сервера в базе данных
-        server = get_object_or_404(Server, pk=server_id)
+        server = get_object_or_404(Server, pk=serverIp)
 
-        # Выполняем проверки возможности выполнения операции (можно использовать, например, suCommand и suPassword для проверки привилегий)
-        # Выполняем скрипт с требуемыми параметрами и получаем статус выполнения
-        # Удаляем из базы данных всех пользователей, связанных с этим сервером, и сам сервер
+        command = [
+            'bash',
+            'core/backend/scripts/deleteServer.sh',
+            serverIp,
+            port_ssh,
+            username,
+            password
+        ]
+
+        subprocess.run(command)
+
         server_users = ServerUser.objects.filter(server=server)
         for user in server_users:
             user.delete()
@@ -168,13 +186,27 @@ class CreateUser(APIView):
         ]
 
         subprocess.run(command)
+        output = subprocess.check_output(command)
+        output_lines = output.decode('utf-8').splitlines()
+        
+        public_key = output_lines[0]
+        # private_key = output_lines[1]
 
-        #Cпарсить publicKey для клиента, состояние сервера, состояние WG и сохранить необходимые данные по полям.
+        status_command = [
+            'bash',
+            'core/backend/scripts/status.sh',
+            ip,
+            port_ssh,
+            username,
+            password,
+        ]
+        
+        subprocess.run(status_command)
 
-        # statusServer = statusServer
-        # statusWG = statusWG
-        #portWG = port_WG
-        # portSSH=port_ssh
+        output = subprocess.check_output(status_command)
+        output_status = output.decode('utf-8').splitlines()
+        statusServer = output_status[0]
+        statusWG = output_status[1]
 
         user = Server(_id=_id, username = username, publicKey = public_key, allowedIps = ip_with_mask)
         user.save()
@@ -185,7 +217,6 @@ class DeleteUser(APIView):
 
     @jwt_auth_check
     def delete(self, request, id):
-        # Получаем данные от фронтенда, например, id сервера и id пользователя
         server_id = request.data.get('server_id')
         user_id = request.data.get('user_id')
         server = get_object_or_404(Server, pk=server_id)
