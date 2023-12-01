@@ -62,14 +62,14 @@ class Logout(APIView):
 
 class GetServer(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def get(self, _):
         serializer = ServerSerializer(Server.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
 
 class CreateServer(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def post(self, request):
         _id = request.data.get('id')
         ip = request.data.get('ip')
@@ -110,7 +110,7 @@ class CreateServer(APIView):
 
 class DeleteServer(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def delete(self, request):
         # Получаем данные от фронтенда, например, id сервера, suCommand, suPassword
         server_id = request.data.get('server_id')
@@ -134,14 +134,14 @@ class DeleteServer(APIView):
     
 class GetUser(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def get(self, _):
         serializer = UserSerializer(User.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
     
 class CreateUser(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def post(self, request):
         _id = request.data.get('_id')
         port_ssh = request.data.get('port_ssh')
@@ -183,7 +183,7 @@ class CreateUser(APIView):
     
 class DeleteUser(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def delete(self, request, id):
         # Получаем данные от фронтенда, например, id сервера и id пользователя
         server_id = request.data.get('server_id')
