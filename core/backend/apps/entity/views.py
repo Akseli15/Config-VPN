@@ -59,14 +59,14 @@ class Logout(APIView):
 
 class GetServer(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def get(self, _):
         serializer = ServerSerializer(Server.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
 
 class CreateServer(APIView):
 
-    @jwt_auth_check
+    #@jwt_auth_check
     def post(self, request):
         _id = request.data.get('id')
         ip = request.data.get('ip')
@@ -119,11 +119,17 @@ class CreateServer(APIView):
         server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG = port_WG, publicKey = public_key, statusServer = statusServer, statusWG = statusWG)
         server.save()
 
-        return Response({"status": "ok"})
+        result_status = {
+            "Status":"Сервер успешно создан",
+            "ServerStatus":statusServer,
+            "WGStatus": statusWG
+        }
+
+        return Response(result_status)
 
 class DeleteServer(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def delete(self, request):
         serverIp = request.data.get('serverIp')
         username = request.data.get('username')
@@ -148,18 +154,18 @@ class DeleteServer(APIView):
             user.delete()
         server.delete()
 
-        return Response({"status": "ok"})
+        return Response({"Status": "Сервер успешно удалён"})
     
 class GetUser(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def get(self, _):
         serializer = UserSerializer(User.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
     
 class CreateUser(APIView):
 
-    @jwt_auth_check
+    # @jwt_auth_check
     def post(self, request):
         _id = request.data.get('_id')
         port_ssh = request.data.get('port_ssh')
@@ -211,22 +217,38 @@ class CreateUser(APIView):
         user = Server(_id=_id, username = username, publicKey = public_key, allowedIps = ip_with_mask)
         user.save()
 
-        return Response({"status": "ok"})
+        result_status = {
+            "Status":"Пользователь успешно создан",
+            "ServerStatus":statusServer,
+            "WGStatus": statusWG
+        }
+
+        return Response(result_status)
     
 class DeleteUser(APIView):
 
-    @jwt_auth_check
-    def delete(self, request, id):
-        server_id = request.data.get('server_id')
-        user_id = request.data.get('user_id')
-        server = get_object_or_404(Server, pk=server_id)
-        user = get_object_or_404(User, pk=user_id)
+    # @jwt_auth_check
+    def delete(self, request):
+        serverIp = request.data.get('serverIp')
+        port_ssh = request.data.get('port_ssh')
+        username = request.data.get('username')
+        password = request.data.get('password')
+        publicKey = request.data.get("publicKey")
 
-        # Проверяем возможность операции и выполняем скрипт deleteUser.sh с требуемыми параметрами
-        # Дожидаемся завершения выполнения скрипта и получаем результаты (например, 3 параметра)
-        # В зависимости от состояния сервера и статуса операции, удаляем или сохраняем данные в базе данных
-        # Возвращаем статус фронтенду
-        return Response({"status": "ok"})
+        command = [
+            'bash',
+            'core/backend/scripts/deleteUser.sh',
+            serverIp,
+            port_ssh,
+            username,
+            password,
+            publicKey
+        ]
+
+        subprocess.run(command)
+
+
+        return Response({"Status": "Пользователь успешно удалён"})
 
 
 class ServerStatus(APIView):

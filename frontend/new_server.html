@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/new_server.css">
+    <link href="https://fonts.cdnfonts.com/css/tiny-pixy" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/forma-djr-banner" rel="stylesheet">
+    <title>NEW Server</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo__block">
+                <div class="logo__img"><img  alt="" src="/img/Frame.png" width="100%" height="100%"></div>
+                <div class="title"> Ogre VPN</div>
+            </div>
+            <div class="nav__bar">
+                <div class="burger">
+                   <span></span>
+                </div>
+                
+                <button class="btn__icon"><img src="img/profile.png" alt="" width="100%" height="100%"></button>
+                <button class="btn__icon"><img src="img/exit.png" alt="" width="100%" height="100%"></button>
+            </div>
+        </div>
+        <div class="nav__bar">
+            <button class="user__list__button left"><img src="/img/Arrow 2 (1).svg" alt=""></button>
+            <div class="server__list__title"> Создание нового сервера</div>
+           
+        </div>
+           <div class="display__flex__up">
+                <form class="auth__form new_server">
+                    <div class="popup__input__block">
+                        <div >
+                            <input class="popup__input" type="email">
+                            <div class="input__span auth">Введите название сервера</div>
+                        </div>
+                        <div>
+                            <input class="popup__input" type="password">
+                            <div class="input__span auth">Введите IP сервера</div>
+                        </div>
+                        <div >
+                            <input class="popup__input" type="email">
+                            <div class="input__span auth">Введите порт для вашего сервера</div>
+                        </div>
+                        <div >
+                            <input class="popup__input" type="email">
+                            <div class="input__span auth">Введите логин для пользователя</div>
+                        </div>
+                        <div >
+                            <input id="popup__input none" class="popup__input" type="email">
+                            <div id="input__span auth none" class="input__span auth">Введите пароль для пользователя</div>
+                        </div>
+                        
+                        <div id="popup__window__is" class="is__is">
+                            <input id="popup__input none" class="popup__input none " type="email" readonly>
+                            <div id="input__span auth none" class="input__span auth none">Введите пароль для суперпользователя</div>
+                        </div>
+                        <div id="popup__window__none" class="is__none">
+                            <input id="popup__input none" class="popup__input" type="email">
+                            <div id="input__span auth none" class="input__span auth">Введите пароль для суперпользователя</div>
+                        </div>
+            
+                    </div>
+                    <div class="display__flex buttons">
+                        <div class="button-container">
+                            <span id="su" class="button left-button" onclick="handleSuClick()">su</span>
+                            <span class="button middle-button">sudo</span>
+                            <span id="none" class="button right-button" onclick="handleNoneClick()">none</span>
+                        </div>
+                       <button class="server__list__button">+ Создать cервер</button>
+                    </div>
+                </form>
+                <div class="right__info">
+                    <img class="border" src="/img/wARNING.png" width="40%" height="30%">
+                    <img src="/img/Предупреждение.png" alt="" width="90%" height="80%">
+                </div>
+           </div>
+        
+        
+        
+       
+</div>
+<script>
+        const suButton = document.getElementById('su');
+        const noneButton = document.getElementById('none');
+        const popup__is__none = document.querySelector('.is__none');
+        const popup__is__is = document.querySelector('.is__is');
+
+        suButton.addEventListener('click',function handleSuClick(){
+            popup__is__is.style.display="none";
+            popup__is__none.style.display="block";
+        });
+
+        noneButton.addEventListener('click',  function handleNoneClick(){
+            popup__is__is.style.display="block";
+            popup__is__none.style.display="none";
+        });
+        
+</script>
+</body>
+</html>
