@@ -31,6 +31,12 @@ ALLOWED_HOSTS = os.environ.get( "ALLOWED_HOSTS", default="localhost 127.0.0.1").
 CSRF_TRUSTED_ORIGINS = os.environ.get( "CSRF_TRUSTED_ORIGINS", default="http://localhost:8000").split(" ")
 CORS_ALLOWED_ORIGINS = os.environ.get( "CORS_ALLOWED_ORIGINS", default="http://localhost:8000").split(" ")
 
+INSTALLED_APPS = [
+    'corsheaders',
+]
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+]
 
 # Application definition
 
@@ -150,3 +156,24 @@ SIMPLE_JWT = {
 
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
+
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
