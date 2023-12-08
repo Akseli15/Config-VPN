@@ -15,7 +15,7 @@ from rest_framework import status
 import random, string, subprocess
 import ipaddress, random
 
-
+#DONE
 class AuthToken(APIView):
     
     permission_classes = (AllowAny,)
@@ -44,6 +44,7 @@ def get_tokens_for_user(user):
         'access': str(refresh.access_token),
     }
 
+#DONE
 class Logout(APIView):
 
     permission_classes = (IsAuthenticated,)
@@ -57,6 +58,7 @@ class Logout(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+#DONE
 class GetServer(APIView):
 
     # @jwt_auth_check
@@ -64,18 +66,66 @@ class GetServer(APIView):
         serializer = ServerSerializer(Server.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
 
+#WRITE PARSER
+class GetServerById(APIView):
+
+    def get(self, _, id):
+        try:
+            server = Server.objects.get(_id=id)
+            serverUser = ServerUser.objects.get(_id=id)
+
+            ip = server.ip
+            port_ssh = server.portSSH
+            username = serverUser.login
+            password = serverUser.password
+
+            status_command = [
+                'bash',
+                'core/backend/scripts/status.sh',
+                ip,
+                port_ssh,
+                username,
+                password,
+            ]
+        
+            subprocess.run(status_command)
+
+            #Parser for all params
+            output = subprocess.check_output(status_command)
+            output_status = output.decode('utf-8').splitlines()
+
+            workload = output_status[0]
+            userCounter = output_status[1]
+            users = output_status[2]
+            serverStatus = output_status[3]
+            wgStatus = output_status[4]
+
+            result_data = {
+                "workload":workload,
+                "user_counter":userCounter,
+                "users":users,
+                "server_status":serverStatus,
+                "wg_status":wgStatus
+            }
+            return Response(result_data)
+        except Server.DoesNotExist:
+            return JsonResponse({"error": "Сервер не найден"})
+
+    pass
+
+#DONE
 class CreateServer(APIView):
 
     #@jwt_auth_check
     def post(self, request):
-        _id = request.data.get('id') # сама генерируешь
-        ip = request.data.get('ip') # с фронта
-        port_ssh = request.data.get('port_ssh') # с фронта
-        username = request.data.get('username') # с фронта
-        password = request.data.get('password') # с фронта
-        suCommand = request.data.get('suCommand') # с фронта
-        serverUsername = ''.join(random.choices(string.ascii_letters + string.digits, k=10)) # сохранять что б подключить
-        serverPassword = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12)) # сохранять что б подключиться
+        _id = request.data.get('id') 
+        ip = request.data.get('ip') 
+        port_ssh = request.data.get('port_ssh') 
+        username = request.data.get('username') 
+        password = request.data.get('password') 
+        suCommand = request.data.get('suCommand') 
+        serverUsername = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        serverPassword = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12)) 
         port_WG = str(random.randint(49152, 65535))
 
         create_command = [
@@ -98,7 +148,6 @@ class CreateServer(APIView):
         output_lines = output.decode('utf-8').splitlines()
 
         public_key = output_lines[0]
-        # private_key = output_lines[1]
 
         status_command = [
             'bash',
@@ -111,6 +160,7 @@ class CreateServer(APIView):
         
         subprocess.run(status_command)
 
+        #Write parser or getting statusServer and statusWG
         output = subprocess.check_output(status_command)
         output_status = output.decode('utf-8').splitlines()
         statusServer = output_status[0]
@@ -118,9 +168,10 @@ class CreateServer(APIView):
 
         server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG = port_WG, publicKey = public_key, statusServer = statusServer, statusWG = statusWG)
         server.save()
-        
+
         serverUser = ServerUser(_id=_id,login=serverUsername,password=serverPassword)
         serverUser.save()
+
         
         result_status = {
             "Status":"Сервер успешно создан",
@@ -130,27 +181,26 @@ class CreateServer(APIView):
 
         return Response(result_status)
 
+#DONE
 class DeleteServer(APIView):
 
     # @jwt_auth_check
-    def delete(self, request):
+    def get(self, request):
         id = request.data.get('id')
 
         server = Server.objects.get(_id=id)
         serverUser = ServerUser.objects.get(_id=id)
         
         server = Server.objects.get(_id=id)
-        serverIp = ServerSerializer(server).ip
-        username = ServerSerializer(serverUser).username
-        password =  ServerSerializer(serverUser).password
-        port_ssh =  ServerSerializer(server).portSSH
-
-        server = get_object_or_404(Server, pk=serverIp)
+        ip = server.ip
+        username = serverUser.login
+        password =  serverUser.password
+        port_ssh =  server.portSSH
 
         command = [
             'bash',
             'core/backend/scripts/deleteServer.sh',
-            serverIp,
+            ip,
             port_ssh,
             username,
             password
@@ -166,13 +216,7 @@ class DeleteServer(APIView):
 
         return Response({"Status": "Сервер успешно удалён"})
     
-class GetUser(APIView):
-
-    # @jwt_auth_check
-    def get(self, _):
-        serializer = UserSerializer(User.objects.all(), many=True)
-        return JsonResponse(serializer.data, safe=False)
-    
+#IN WORK
 class CreateUser(APIView):
 
     # @jwt_auth_check
@@ -209,8 +253,8 @@ class CreateUser(APIView):
         output_lines = output.decode('utf-8').splitlines()
         
         public_key = output_lines[0]
-        # private_key = output_lines[1]
 
+        # Script return statusWG instead of statusServer
         status_command = [
             'bash',
             'core/backend/scripts/status.sh',
@@ -224,12 +268,15 @@ class CreateUser(APIView):
 
         output = subprocess.check_output(status_command)
         output_status = output.decode('utf-8').splitlines()
+
+        #Write parser
         statusServer = output_status[0]
         statusWG = output_status[1]
 
         user = User(_id=_id, username = username, publicKey = public_key, allowedIps = ip_with_mask)
         user.save()
 
+        #return just WGstatus
         result_status = {
             "Status":"Пользователь успешно создан",
             "ServerStatus":statusServer,
@@ -237,21 +284,31 @@ class CreateUser(APIView):
         }
 
         return Response(result_status)
-    
+
+
 class DeleteUser(APIView):
 
     # @jwt_auth_check
     def delete(self, request):
-        serverIp = request.data.get('serverIp')
-        port_ssh = request.data.get('port_ssh')
-        username = request.data.get('username')
-        password = request.data.get('password')
-        publicKey = request.data.get("publicKey")
+        user_id = request.data.get('id')
+
+        user = User.objects.get(_id=user_id)
+        publicKey = user.publicKey
+
+        server = Server.objects.get(publicKey=publicKey)
+        server_id = server._id
+
+        serverUser = ServerUser.objects.get(_id=server_id)
+
+        ip = server.ip
+        port_ssh = server.portSSH
+        username = serverUser.login
+        password = serverUser.password
 
         command = [
             'bash',
             'core/backend/scripts/deleteUser.sh',
-            serverIp,
+            ip,
             port_ssh,
             username,
             password,
@@ -260,26 +317,4 @@ class DeleteUser(APIView):
 
         subprocess.run(command)
 
-
         return Response({"Status": "Пользователь успешно удалён"})
-
-
-# class ServerStatus(APIView):
-
-#     permission_classes = (IsAuthenticated,)
-
-#     def post(self, request):
-#         # Получаем данные от фронтенда, например, id сервера
-#         server_id = request.data.get('server_id')
-
-#         # Находим объект сервера и связанных с ним пользователей в базе данных
-#         server = get_object_or_404(Server, pk=server_id)
-#         server_users = ServerUser.objects.filter(server=server)
-
-#         # Выполняем скрипт status.sh с требуемыми параметрами
-#         # Парсим данные, такие как статус сервера, загрузка CPU, статус VPN, последний онлайн пользователя и т. д.
-#         # Сохраняем и выводим необходимые данные на фронтенд
-#         # Проверяем список клиентов и обновляем базу данных в соответствии с результатами
-#         # ...
-#         # Возвращаем статус фронтенду
-#         return Response({"status": "ok"})
