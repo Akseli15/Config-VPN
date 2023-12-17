@@ -75,7 +75,7 @@ class GetServerById(APIView):
     def get(self, _, id):
         try:
             server = Server.objects.get(_id=id)
-            serverUser = ServerUser.objects.get(_id=id) #wtf
+            serverUser = ServerUser.objects.get(_id=id) #WTF????????????????????????????????????????????????
 
             ip = server.ip
             port_ssh = server.portSSH
@@ -140,7 +140,7 @@ class CreateServer(APIView):
             username,
             password,
             suCommand,
-            'not_vpn_at_all',
+            'adminadmin', #это блять что такое. Мне с фронта нужно отправить пароль суперпользователя, что б сюда вставить
             serverUsername,
             serverPassword,
         ]
