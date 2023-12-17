@@ -3,7 +3,6 @@
 configsFolder=$(cat ./configsFolder)
 shellFolder=$(pwd)
 
-#преобразование в переменные 
 serverIp=$1
 portSSH=$2
 portWG=$3
@@ -26,4 +25,5 @@ echo '$suPassword' | $suCommand -S mkdir /vpn
 $suCommand cp -r /tmp/vpn/* /vpn
 $suCommand bash /vpn/shell/install.sh $serverUsername $serverPassword $serverIp $portSSH $portWG
 EOF
-# rm -r  $configsFolder/$serverIp/vpn
+
+rm -r  $configsFolder/$serverIp/vpn

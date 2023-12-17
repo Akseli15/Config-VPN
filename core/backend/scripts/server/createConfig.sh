@@ -6,6 +6,7 @@ mkdir keys
 wg genkey | tee "$PWD/keys/server_privatekey" | wg pubkey | tee "$PWD/keys/server_publickey"
 server_privatekey=$(cat "$PWD/keys/server_privatekey")
 server_publickey=$(cat "$PWD/keys/server_publickey")
+echo "$server_privatekey"
 rm -r keys
 
 server_interface=$(ip route | grep default | awk '{print $5}')
