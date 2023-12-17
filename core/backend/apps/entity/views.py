@@ -75,7 +75,7 @@ class GetServerById(APIView):
     def get(self, _, id):
         try:
             server = Server.objects.get(_id=id)
-            serverUser = ServerUser.objects.get(_id=id)
+            serverUser = ServerUser.objects.get(_id=id) #wtf
 
             ip = server.ip
             port_ssh = server.portSSH

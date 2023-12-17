@@ -19,7 +19,7 @@ services:
       - ./core/backend/static:/usr/src/app/static
     ports:
       # - 8000:8000
-      - 8081:8081
+      - 8080:8080
       - 80:443
     networks:
       - configvpn_net
