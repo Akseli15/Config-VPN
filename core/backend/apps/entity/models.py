@@ -20,7 +20,7 @@ class Server(models.Model):
 
 class User(models.Model):
 
-    _id = models.CharField(verbose_name='ID', max_length=150, default='user_', unique=True)
+    _id = models.CharField(verbose_name='ID', max_length=150, default='user_')
     username = models.CharField(verbose_name="Имя пользователя", max_length=50, default='address', unique=True)
     publicKey = models.CharField(verbose_name="Публичный ключ", max_length=50, default='public_key', unique=True)
     allowedIps = models.CharField(max_length=18, verbose_name="Разрешенные IP", default="10.0.0.1/32")
@@ -48,7 +48,7 @@ class SystemUser(models.Model):
 
 class ServerUser(models.Model):
 
-    _id = models.CharField(verbose_name='ID', max_length=150, default='serveruser_', unique=True)
+    _id = models.CharField(verbose_name='ID', max_length=150, default='1', unique=True)
     login = models.CharField(verbose_name="Логин", max_length=60, unique=True)
     password = models.CharField(verbose_name="Пароль", max_length=60)
 
