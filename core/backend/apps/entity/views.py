@@ -111,20 +111,27 @@ class GetServerById(APIView):
                     peer_dict[key] = value
                 users.append(peer_dict)
 
-            # Здесь добавлена переменная workload
-            workload = "Some workload"  # Вам нужно определить, как получить эту информацию
+            workload = output[0]
 
-            result_data = {
-                "serverStatus": "Сервер активен",
-                "wg_status": f"WireGuard прослушивает порт {listening_port}",
-                "workload": workload,
-                "userCounter": len(users),
-                "users": users
-            }
+            count_of_users = len(users) / (workload / 100) if workload else 0
 
+            if listening_port:
+                result_data = {
+                    "serverStatus": "Сервер активен",
+                    "wg_status": f"WireGuard прослушивает порт {listening_port}",
+                    "workload": workload,
+                    "total_users": count_of_users,
+                    "userCounter": len(users),
+                    "users": users
+                }
+            else:
+                result_data = {
+                    "serverStatus": "Сервер неактивен",
+                }
+                                
             return Response(result_data)
         except Server.DoesNotExist:
-            return JsonResponse({"error": "Сервер не найден"})
+            return Response({"error": "Сервер не найден"}, status=404)
 
 #DONE
 class CreateServer(APIView):
