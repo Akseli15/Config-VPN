@@ -134,7 +134,7 @@ class GetServerById(APIView):
 
 #DONE
 class CreateServer(APIView):
-
+    
     #@jwt_auth_check
     def post(self, request):
         _id = request.data.get('id')
@@ -161,10 +161,9 @@ class CreateServer(APIView):
             serverPassword,
         ]
 
-        subprocess.run(create_command)
-
-        output = subprocess.check_output(create_command)
-        output_lines = output.decode('utf-8').splitlines()
+        # Сохраняем вывод в переменной
+        output = subprocess.check_output(create_command, text=True)
+        output_lines = output.splitlines()
         
         public_key = output_lines[0]
 
@@ -178,7 +177,7 @@ class CreateServer(APIView):
 
         subprocess.run(status_command)
 
-        output = subprocess.check_output(status_command, text=True)
+        # Используем сохраненный вывод
         match = re.search(r'\s*listening port:\s*(\d+)', output)
         listening_port = match.group(1) if match else None
 
