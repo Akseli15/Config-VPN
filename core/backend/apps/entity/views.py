@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import random, string, subprocess
-import ipaddress, random, re
+import ipaddress, random, re, json
 
 #DONE
 class AuthToken(APIView):
@@ -69,13 +69,14 @@ class GetServer(APIView):
         serializer = ServerSerializer(Server.objects.all(), many=True)
         return JsonResponse(serializer.data, safe=False)
 
-#WRITE PARSER
+#DONE
 class GetServerById(APIView):
 
+    #@jwt_auth_check
     def get(self, _, id):
         try:
             server = Server.objects.get(_id=id)
-            serverUser = ServerUser.objects.get(_id=id) #WTF????????????????????????????????????????????????
+            serverUser = ServerUser.objects.get(_id=id)
 
             ip = server.ip
             port_ssh = server.portSSH
@@ -93,28 +94,37 @@ class GetServerById(APIView):
 
             subprocess.run(status_command)
 
-            #Parser for all params
-            output = subprocess.check_output(status_command)
-            output_status = output.decode('utf-8').splitlines()
+            output = subprocess.check_output(status_command, text=True)
 
-            workload = output_status[0]
-            userCounter = output_status[1]
-            users = output_status[2]
-            serverStatus = output_status[3]
-            wgStatus = output_status[4]
+            match = re.search(r'\s*listening port:\s*(\d+)', output)
+            listening_port = match.group(1) if match else None
+
+            peer_info = re.findall(r'peer: (\S+)\n(\s+\S+: .+\n)+', output)
+
+            users = []
+            for peer in peer_info:
+                peer_dict = {}
+                peer_dict["public_key"] = peer[0]
+                peer_lines = peer[1].strip().split('\n')
+                for line in peer_lines:
+                    key, value = map(str.strip, line.split(':'))
+                    peer_dict[key] = value
+                users.append(peer_dict)
+
+            # Здесь добавлена переменная workload
+            workload = "Some workload"  # Вам нужно определить, как получить эту информацию
 
             result_data = {
-                "workload":workload,
-                "user_counter":userCounter,
-                "users":users,
-                "server_status":serverStatus,
-                "wg_status":wgStatus
+                "serverStatus": "Сервер активен",
+                "wg_status": f"WireGuard прослушивает порт {listening_port}",
+                "workload": workload,
+                "userCounter": len(users),
+                "users": users
             }
+
             return Response(result_data)
         except Server.DoesNotExist:
             return JsonResponse({"error": "Сервер не найден"})
-
-    pass
 
 #DONE
 class CreateServer(APIView):
@@ -164,16 +174,9 @@ class CreateServer(APIView):
 
         subprocess.run(status_command)
 
-        wg_output = subprocess.check_output(status_command, text=True)
-        match = re.search(r'\s*listening port:\s*(\d+)', wg_output)
+        output = subprocess.check_output(status_command, text=True)
+        match = re.search(r'\s*listening port:\s*(\d+)', output)
         listening_port = match.group(1) if match else None
-
-
-        server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG=port_WG, publicKey=public_key, statusServer=statusServer, statusWG=statusWG)
-        server.save()
-
-        serverUser = ServerUser(_id=_id, login=serverUsername, password=serverPassword)
-        serverUser.save()
 
         result_status = {}
 
@@ -183,12 +186,22 @@ class CreateServer(APIView):
                 "ServerStatus": "Сервер активен",
                 "WGStatus": "WireGuard прослушивает порт" + listening_port
             }
+            statusServer = True
+            statusWG = True
         else:
             result_status = {
                 "Status": "Ошибка при создании сервера",
                 "ServerStatus": "Сервер неактивен"
             }
+            statusServer = False
+            statusWG = False
 
+        server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG=port_WG, publicKey=public_key, statusServer=statusServer, statusWG=statusWG)
+        server.save()
+
+        serverUser = ServerUser(_id=_id, login=serverUsername, password=serverPassword)
+        serverUser.save()
+        
         return Response(result_status)
 
 #DONE
@@ -289,7 +302,6 @@ class CreateUser(APIView):
         #return just WGstatus
         result_status = {
             "Status":"Пользователь успешно создан",
-            "ServerStatus":statusServer,
             "WGStatus": statusWG
         }
 
