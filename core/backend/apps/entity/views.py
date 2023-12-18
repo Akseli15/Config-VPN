@@ -71,7 +71,6 @@ class GetServer(APIView):
 
 #DONE
 class GetServerById(APIView):
-
     #@jwt_auth_check
     def get(self, _, id):
         try:
@@ -93,7 +92,11 @@ class GetServerById(APIView):
 
             subprocess.run(status_command)
 
-            output = subprocess.check_output(status_command, text=True)
+            try:
+                process = subprocess.run(status_command, text=True, check=True, stdout=subprocess.PIPE)
+                output = process.stdout
+            except subprocess.CalledProcessError as e:
+                return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
 
             match = re.search(r'\s*listening port:\s*(\d+)', output)
             listening_port = match.group(1) if match else None
@@ -127,7 +130,7 @@ class GetServerById(APIView):
                 result_data = {
                     "serverStatus": "Сервер неактивен",
                 }
-                                
+
             return Response(result_data)
         except Server.DoesNotExist:
             return Response({"error": "Сервер не найден"}, status=404)
