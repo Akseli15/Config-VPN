@@ -134,7 +134,6 @@ class GetServerById(APIView):
 
 #DONE
 class CreateServer(APIView):
-    
     #@jwt_auth_check
     def post(self, request):
         _id = request.data.get('id')
@@ -161,10 +160,13 @@ class CreateServer(APIView):
             serverPassword,
         ]
 
-        # Сохраняем вывод в переменной
-        output = subprocess.check_output(create_command, text=True)
+        try:
+            process = subprocess.run(create_command, text=True, check=True, stdout=subprocess.PIPE)
+            output = process.stdout
+        except subprocess.CalledProcessError as e:
+            return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
+
         output_lines = output.splitlines()
-        
         public_key = output_lines[0]
 
         status_command = [
@@ -175,9 +177,15 @@ class CreateServer(APIView):
             password,
         ]
 
-        subprocess.run(status_command)
+        try:
+            subprocess.run(status_command, check=True)
+        except subprocess.CalledProcessError as e:
+            return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
+        try:
+            output = subprocess.check_output(status_command, text=True)
+        except subprocess.CalledProcessError as e:
+            return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
 
-        # Используем сохраненный вывод
         match = re.search(r'\s*listening port:\s*(\d+)', output)
         listening_port = match.group(1) if match else None
 
@@ -206,6 +214,7 @@ class CreateServer(APIView):
         serverUser.save()
         
         return Response(result_status)
+
 
 #DONE
 class DeleteServer(APIView):
