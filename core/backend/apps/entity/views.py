@@ -84,7 +84,6 @@ class GetServerById(APIView):
             password = serverUser.password
 
             status_command = [
-                'bash',
                 'core/backend/scripts/status.sh',
                 ip,
                 port_ssh,
@@ -150,7 +149,6 @@ class CreateServer(APIView):
         port_WG = str(random.randint(49152, 65535))
 
         create_command = [
-            'bash',
             'core/backend/scripts/installing.sh',
             ip,
             port_ssh,
@@ -171,7 +169,6 @@ class CreateServer(APIView):
         public_key = output_lines[0]
 
         status_command = [
-            'bash',
             'core/backend/scripts/status.sh',
             ip,
             port_ssh,
@@ -228,7 +225,6 @@ class DeleteServer(APIView):
         port_ssh =  server.portSSH
 
         command = [
-            'bash',
             'core/backend/scripts/deleteServer.sh',
             ip,
             port_ssh,
@@ -266,7 +262,6 @@ class CreateUser(APIView):
         ip_with_mask = ipaddress.IPv4Network(f"{vpnip}/32", strict=False)
 
         command = [
-            'bash',
             'core/backend/scripts/addUser.sh',
             ip,
             port_ssh,
@@ -286,7 +281,6 @@ class CreateUser(APIView):
 
         # Script return statusWG instead of statusServer
         status_command = [
-            'bash',
             'core/backend/scripts/status.sh',
             ip,
             port_ssh,
@@ -335,7 +329,6 @@ class DeleteUser(APIView):
         password = serverUser.password
 
         command = [
-            'bash',
             'core/backend/scripts/deleteUser.sh',
             ip,
             port_ssh,
