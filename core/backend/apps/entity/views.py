@@ -90,11 +90,12 @@ class GetServerById(APIView):
                 password,
             ]
 
-            subprocess.run(status_command)
-
             try:
-                process = subprocess.run(status_command, text=True, check=True, stdout=subprocess.PIPE)
-                output = process.stdout
+                subprocess.run(status_command, check=True)
+            except subprocess.CalledProcessError as e:
+                return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
+            try:
+                output = subprocess.check_output(status_command, text=True)
             except subprocess.CalledProcessError as e:
                 return JsonResponse({"error": f"Ошибка при выполнении команды: {e.output}"})
 
