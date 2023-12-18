@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 import random, string, subprocess
-import ipaddress, random
+import ipaddress, random, re
 
 #DONE
 class AuthToken(APIView):
@@ -127,6 +127,7 @@ class CreateServer(APIView):
         username = request.data.get('username')
         password = request.data.get('password')
         suCommand = request.data.get('suCommand')
+        suPassword = request.data.get('suPassword')
         serverUsername = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
         serverPassword = ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12))
         port_WG = str(random.randint(49152, 65535))
@@ -140,7 +141,7 @@ class CreateServer(APIView):
             username,
             password,
             suCommand,
-            'adminadmin', #это блять что такое. Мне с фронта нужно отправить пароль суперпользователя, что б сюда вставить
+            suPassword,
             serverUsername,
             serverPassword,
         ]
@@ -149,7 +150,7 @@ class CreateServer(APIView):
 
         output = subprocess.check_output(create_command)
         output_lines = output.decode('utf-8').splitlines()
-
+        
         public_key = output_lines[0]
 
         status_command = [
@@ -163,24 +164,30 @@ class CreateServer(APIView):
 
         subprocess.run(status_command)
 
-        #Write parser or getting statusServer and statusWG
-        output = subprocess.check_output(status_command)
-        output_status = output.decode('utf-8').splitlines()
-        statusServer = output_status[0]
-        statusWG = output_status[1]
+        wg_output = subprocess.check_output(status_command, text=True)
+        match = re.search(r'\s*listening port:\s*(\d+)', wg_output)
+        listening_port = match.group(1) if match else None
 
-        server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG = port_WG, publicKey = public_key, statusServer = statusServer, statusWG = statusWG)
+
+        server = Server(_id=_id, ip=ip, portSSH=port_ssh, portWG=port_WG, publicKey=public_key, statusServer=statusServer, statusWG=statusWG)
         server.save()
 
-        serverUser = ServerUser(_id=_id,login=serverUsername,password=serverPassword)
+        serverUser = ServerUser(_id=_id, login=serverUsername, password=serverPassword)
         serverUser.save()
 
+        result_status = {}
 
-        result_status = {
-            "Status":"Сервер успешно создан",
-            "ServerStatus":statusServer,
-            "WGStatus": statusWG
-        }
+        if listening_port:
+            result_status = {
+                "Status": "Сервер успешно создан",
+                "ServerStatus": "Сервер активен",
+                "WGStatus": "WireGuard прослушивает порт" + listening_port
+            }
+        else:
+            result_status = {
+                "Status": "Ошибка при создании сервера",
+                "ServerStatus": "Сервер неактивен"
+            }
 
         return Response(result_status)
 
